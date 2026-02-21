@@ -122,6 +122,7 @@ public:
 	PHLWINDOW target_window = nullptr;
 	PHLWORKSPACE workspace = nullptr;
 	bool hidden = false;
+	bool is_stacked = false;
 	Hy3TabBar bar;
 	PHLANIMVAR<Vector2D> pos;
 	PHLANIMVAR<Vector2D> size;

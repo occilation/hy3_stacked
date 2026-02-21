@@ -612,10 +612,16 @@ Hy3TabGroup::Hy3TabGroup(Hy3Node& node) {
 void Hy3TabGroup::updateWithGroup(Hy3Node& node, bool warp) {
 	static const auto bar_height = ConfigValue<Hyprlang::INT>("plugin:hy3:tabs:height");
 
+	auto& group = node.data.as_group();
+	this->is_stacked = group.layout == Hy3GroupLayout::Stacked;
+
 	auto windowBox = node.getStandardWindowArea();
 
 	auto tpos = windowBox.pos();
-	auto tsize = Vector2D(windowBox.size().x, *bar_height);
+	auto child_count = (int)group.children.size();
+	auto tsize = this->is_stacked
+	    ? Vector2D(windowBox.size().x, *bar_height * child_count)
+	    : Vector2D(windowBox.size().x, *bar_height);
 
 	this->hidden = node.hidden;
 	if (this->pos->goal() != tpos) {
@@ -825,13 +831,24 @@ void Hy3TabGroup::renderTabBar() {
 	                  * (valid(this->workspace) ? this->workspace->m_alpha->value() : 1.0);
 
 	auto render_entry = [&](Hy3TabBarEntry& entry) {
-		Vector2D entry_pos = {
-		    (box.x + (entry.offset->value() * box.w) + (*padding * 0.5)) * scale,
-		    scaledBox.y
-		        + ((entry.vertical_pos->value() * (box.h + *padding) * scale)
-		           * (*enter_from_top ? -1 : 1)),
-		};
-		Vector2D entry_size = {((entry.width->value() * box.w) - *padding) * scale, scaledBox.h};
+		Vector2D entry_pos, entry_size;
+		if (this->is_stacked) {
+			entry_pos = {
+			    (box.x + (*padding * 0.5)) * scale,
+			    scaledBox.y + (entry.offset->value() * scaledBox.h)
+			        + ((entry.vertical_pos->value() * (entry.width->value() * scaledBox.h + *padding * scale))
+			           * (*enter_from_top ? -1 : 1)),
+			};
+			entry_size = {(box.w - *padding) * scale, entry.width->value() * scaledBox.h - *padding * scale};
+		} else {
+			entry_pos = {
+			    (box.x + (entry.offset->value() * box.w) + (*padding * 0.5)) * scale,
+			    scaledBox.y
+			        + ((entry.vertical_pos->value() * (box.h + *padding) * scale)
+			           * (*enter_from_top ? -1 : 1)),
+			};
+			entry_size = {((entry.width->value() * box.w) - *padding) * scale, scaledBox.h};
+		}
 		if (entry_size.x < 0 || entry_size.y < 0 || fade_opacity == 0.0) return;
 
 		CBox box = {

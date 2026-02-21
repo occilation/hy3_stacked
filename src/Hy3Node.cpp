@@ -531,7 +531,7 @@ void Hy3Node::recalcSizePosRecursive(bool no_animation) {
 			child->hidden = this->hidden || expand_focused || group.focused_child != child;
 
 			child->gap_topleft_offset =
-			    Vector2D(gap_topleft_offset.x + tab_height_offset, gap_topleft_offset.y);
+			    Vector2D(gap_topleft_offset.x, gap_topleft_offset.y + tab_height_offset * child_count);
 			child->gap_bottomright_offset = gap_bottomright_offset;
 
 			child->recalcSizePosRecursive(no_animation);
