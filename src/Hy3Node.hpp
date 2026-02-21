@@ -16,6 +16,7 @@ enum class Hy3GroupLayout {
 	SplitH,
 	SplitV,
 	Tabbed,
+	Stacked,
 };
 
 enum class Hy3NodeType {

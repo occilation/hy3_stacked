@@ -71,7 +71,8 @@ void Hy3GroupData::collapseExpansions() {
 void Hy3GroupData::setLayout(Hy3GroupLayout layout) {
 	this->layout = layout;
 
-	if (layout != Hy3GroupLayout::Tabbed) {
+	if (layout != Hy3GroupLayout::Tabbed && layout !=
+  Hy3GroupLayout::Stacked) {
 		this->previous_nontab_layout = layout;
 	}
 }
@@ -388,6 +389,7 @@ void Hy3Node::recalcSizePosRecursive(bool no_animation) {
 		constraint = tsize.y - gap_topleft_offset.y - gap_bottomright_offset.y;
 		break;
 	case Hy3GroupLayout::Tabbed: break;
+	case Hy3GroupLayout::Stacked: break;
 	}
 
 	auto expand_focused = group.expand_focused != ExpandFocusType::NotExpanded;
@@ -446,6 +448,8 @@ void Hy3Node::recalcSizePosRecursive(bool no_animation) {
 			case Hy3GroupLayout::SplitH: offset += child->size_ratio * ratio_mul; break;
 			case Hy3GroupLayout::SplitV: offset += child->size_ratio * ratio_mul; break;
 			case Hy3GroupLayout::Tabbed: break;
+			
+			case Hy3GroupLayout::Stacked: break;
 			}
 
 			continue;
@@ -517,6 +521,17 @@ void Hy3Node::recalcSizePosRecursive(bool no_animation) {
 
 			child->gap_topleft_offset =
 			    Vector2D(gap_topleft_offset.x, gap_topleft_offset.y + tab_height_offset);
+			child->gap_bottomright_offset = gap_bottomright_offset;
+
+			child->recalcSizePosRecursive(no_animation);
+			break;
+		case Hy3GroupLayout::Stacked:
+			child->position = tpos;
+			child->size = tsize;
+			child->hidden = this->hidden || expand_focused || group.focused_child != child;
+
+			child->gap_topleft_offset =
+			    Vector2D(gap_topleft_offset.x + tab_height_offset, gap_topleft_offset.y);
 			child->gap_bottomright_offset = gap_bottomright_offset;
 
 			child->recalcSizePosRecursive(no_animation);
@@ -613,6 +628,7 @@ std::string Hy3Node::getTitle() {
 		case Hy3GroupLayout::SplitH: title = "[H] "; break;
 		case Hy3GroupLayout::SplitV: title = "[V] "; break;
 		case Hy3GroupLayout::Tabbed: title = "[T] "; break;
+		case Hy3GroupLayout::Stacked: title = "[S] "; break;
 		}
 
 		if (group.focused_child == nullptr) {
@@ -717,6 +733,7 @@ std::string Hy3Node::debugNode() {
 		case Hy3GroupLayout::SplitH: buf << "splith"; break;
 		case Hy3GroupLayout::SplitV: buf << "splitv"; break;
 		case Hy3GroupLayout::Tabbed: buf << "tabs"; break;
+		case Hy3GroupLayout::Stacked: buf << "stacked"; break;
 		}
 
 		buf << "] size ratio: ";

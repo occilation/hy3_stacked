@@ -590,6 +590,7 @@ std::any Hy3Layout::layoutMessage(SLayoutMessageHeader header, std::string conte
 				node->parent->recalcSizePosRecursive();
 				break;
 			case Hy3GroupLayout::Tabbed: break;
+			case Hy3GroupLayout::Stacked: break;
 			}
 		}
 	}
@@ -795,6 +796,23 @@ void Hy3Layout::toggleTabGroupOnWorkspace(const CWorkspace* workspace) {
 	this->toggleTabGroupOn(*node);
 }
 
+void Hy3Layout::unstackGroupOnWorkspace(const CWorkspace* workspace) {
+	auto* node = this->getWorkspaceFocusedNode(workspace);
+	if (node == nullptr) return;
+	node = &node->getPlacementActor();
+
+	this->unstackGroupOn(*node);
+}
+
+void Hy3Layout::toggleStackGroupOnWorkspace(const CWorkspace* workspace) {
+	auto* node = this->getWorkspaceFocusedNode(workspace);
+	if (node == nullptr) return;
+	node = &node->getPlacementActor();
+
+	this->toggleStackGroupOn(*node);
+}
+
+
 void Hy3Layout::changeGroupToOppositeOnWorkspace(const CWorkspace* workspace) {
 	auto* node = this->getWorkspaceFocusedNode(workspace);
 	if (node == nullptr) return;
@@ -881,6 +899,21 @@ void Hy3Layout::toggleTabGroupOn(Hy3Node& node) {
 	auto& group = node.parent->data.as_group();
 	if (group.layout != Hy3GroupLayout::Tabbed) changeGroupOn(node, Hy3GroupLayout::Tabbed);
 	else changeGroupOn(node, group.previous_nontab_layout);
+}
+
+
+void Hy3Layout::unstackGroupOn(Hy3Node& node) {
+    if (node.parent == nullptr) return;
+    auto& group = node.parent->data.as_group();
+    if (group.layout != Hy3GroupLayout::Stacked) return;
+    changeGroupOn(node, group.previous_nontab_layout);
+}
+
+void Hy3Layout::toggleStackGroupOn(Hy3Node& node) {
+    if (node.parent == nullptr) return;
+    auto& group = node.parent->data.as_group();
+    if (group.layout != Hy3GroupLayout::Stacked) changeGroupOn(node, Hy3GroupLayout::Stacked);
+    else changeGroupOn(node, group.previous_nontab_layout);
 }
 
 void Hy3Layout::changeGroupToOppositeOn(Hy3Node& node) {

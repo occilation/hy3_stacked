@@ -120,14 +120,18 @@ public:
 	void makeOppositeGroupOnWorkspace(const CWorkspace* workspace, GroupEphemeralityOption);
 	void changeGroupOnWorkspace(const CWorkspace* workspace, Hy3GroupLayout);
 	void untabGroupOnWorkspace(const CWorkspace* workspace);
+	void unstackGroupOnWorkspace(const CWorkspace* workspace);
 	void toggleTabGroupOnWorkspace(const CWorkspace* workspace);
+	void toggleStackGroupOnWorkspace(const CWorkspace* workspace);
 	void changeGroupToOppositeOnWorkspace(const CWorkspace* workspace);
 	void changeGroupEphemeralityOnWorkspace(const CWorkspace* workspace, bool ephemeral);
 	void makeGroupOn(Hy3Node*, Hy3GroupLayout, GroupEphemeralityOption);
 	void makeOppositeGroupOn(Hy3Node*, GroupEphemeralityOption);
 	void changeGroupOn(Hy3Node&, Hy3GroupLayout);
 	void untabGroupOn(Hy3Node&);
+	void unstackGroupOn(Hy3Node& node);
 	void toggleTabGroupOn(Hy3Node&);
+	void toggleStackGroupOn(Hy3Node& node);
 	void changeGroupToOppositeOn(Hy3Node&);
 	void changeGroupEphemeralityOn(Hy3Node&, bool ephemeral);
 	void shiftNode(Hy3Node&, ShiftDirection, bool once, bool visible);

@@ -916,6 +916,9 @@ void findOverlappingWindows(Hy3Node& node, float height, std::vector<PHLWINDOWRE
 		case Hy3GroupLayout::Tabbed:
 			// assume the height of that node's tab bar already pushes it out of range
 			break;
+		case Hy3GroupLayout::Stacked:
+			// tab bar is on the left, only the focused child is rendered
+			break;
 		}
 	}
 }
